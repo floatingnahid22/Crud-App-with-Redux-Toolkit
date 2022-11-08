@@ -1,0 +1,22 @@
+{
+  "name": "crud-redux",
+  "version": "1.0.0",
+  "description": "<h1 class=\"heading1\"> Redux-ReduxToolkit Tutorial </h1>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/floatingnahid22/Crud-App-with-Redux-Toolkit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/floatingnahid22/Crud-App-with-Redux-Toolkit/issues"
+  },
+  "homepage": "https://github.com/floatingnahid22/Crud-App-with-Redux-Toolkit#readme",
+  "dependencies": {
+    "redux": "^4.2.0"
+  }
+}
