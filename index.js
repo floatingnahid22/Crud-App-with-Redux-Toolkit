@@ -1,23 +1,14 @@
-const { createStore, combineReducers } = require("redux");
+const { createStore, applyMiddleware } = require("redux");
+const { default: logger } = require("redux-logger");
 
 // product constants
 const GET_PRODUCTS = "GET_PRODUCTS";
 const ADD_PRODUCTS = "ADD_PRODUCTS";
 
-// cart constants
-const GET_CART_ITEMS = "GET_CART_ITEMS";
-const ADD_CART_ITEMS = "ADD_CART_ITEMS";
-
 // product states
 const initialProductState = {
   products: ["sugar", "salt"],
   numberOfProducts: 2,
-};
-
-// cart states
-const initialCartState = {
-  cart: ["sugar"],
-  numberOfProducts: 1,
 };
 
 // product actions
@@ -33,18 +24,6 @@ const addProductAction = (product) => {
   };
 };
 
-// cart actions
-const getCartAction = () => {
-  return {
-    type: GET_CART_ITEMS,
-  };
-};
-const addCartAction = (product) => {
-  return {
-    type: ADD_CART_ITEMS,
-    payload: product,
-  };
-};
 
 //product reducer
 const productsReducer = (state = initialProductState, action) => {
@@ -64,32 +43,9 @@ const productsReducer = (state = initialProductState, action) => {
   }
 };
 
-//cart reducer
-const cartReducer = (state = initialCartState, action) => {
-  switch (action.type) {
-    case GET_CART_ITEMS:
-      return {
-        ...state,
-      };
-    case ADD_CART_ITEMS:
-      return {
-        cart: [...state.cart, action.payload],
-        numberOfProducts: state.numberOfProducts + 1,
-      };
-
-    default:
-      return state;
-  }
-};
-
-//combine multiple reducers
-const rootReduer = combineReducers({
-  productR: productsReducer,
-  cartR: cartReducer,
-});
 
 //store
-const store = createStore(rootReduer);
+const store = createStore(productsReducer,applyMiddleware(logger));
 
 store.subscribe(() => {
   console.log(store.getState());
@@ -97,5 +53,3 @@ store.subscribe(() => {
 
 store.dispatch(getProductAction());
 store.dispatch(addProductAction("pen"));
-store.dispatch(getCartAction());
-store.dispatch(addCartAction("salt"));
