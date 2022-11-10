@@ -1,55 +1,92 @@
+// async actions - api calling
+// api url - https://jsonplaceholder.typicode.com/todos
+// middleware- redux-thunk
+// axios api
+
+const axios = require('axios');
 const { createStore, applyMiddleware } = require("redux");
-const { default: logger } = require("redux-logger");
+const reduxThunk = require("redux-thunk").default;
 
-// product constants
-const GET_PRODUCTS = "GET_PRODUCTS";
-const ADD_PRODUCTS = "ADD_PRODUCTS";
+// define constants
+const GET_TODOS_REQUEST = "GET_TODOS_REQUEST";
+const GET_TODOS_SUCCESS = "GET_TODOS_SUCCESS";
+const GET_TODOS_FAILED = "GET_TODOS_FAILED";
+const TODOS_URL = "https://jsonplaceholder.typicode.com/todos";
 
-// product states
-const initialProductState = {
-  products: ["sugar", "salt"],
-  numberOfProducts: 2,
+// define state
+const initialTodosState = {
+  todos: [],
+  isLoading: false,
+  error: null,
 };
 
-// product actions
-const getProductAction = () => {
+const getTodosRequest = () => {
   return {
-    type: GET_PRODUCTS,
-  };
-};
-const addProductAction = (product) => {
-  return {
-    type: ADD_PRODUCTS,
-    payload: product,
+    type: GET_TODOS_REQUEST,
   };
 };
 
+const getTodosSuccess = (todos) => {
+  return {
+    type: GET_TODOS_SUCCESS,
+    payload: todos,
+  };
+};
+const getTodosFailed = (error) => {
+  return {
+    type: GET_TODOS_FAILED,
+    payload: error,
+  };
+};
 
-//product reducer
-const productsReducer = (state = initialProductState, action) => {
+const todosReducer = (state = initialTodosState, action) => {
   switch (action.type) {
-    case GET_PRODUCTS:
+    case GET_TODOS_REQUEST:
       return {
         ...state,
+        isLoading: true,
       };
-    case ADD_PRODUCTS:
+    case GET_TODOS_SUCCESS:
       return {
-        products: [...state.products, action.payload],
-        numberOfProducts: state.numberOfProducts + 1,
+        ...state,
+        todos: action.payload,
+        isLoading: false,
+      };
+    case GET_TODOS_FAILED:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
       };
 
     default:
-      return state;
+      state;
   }
 };
 
+// async action creator
+// thunk-middleware allows us to return a function isntead of obejct
+const fetchData = () => {
+  return (dispatch) => {
+    dispatch(getTodosRequest());
+    axios
+      .get(TODOS_URL)
+      .then((res) => {
+        const todos = res.data;
+        const titles = todos.map((todo) => todo.title);
+        dispatch(getTodosSuccess(titles));
+      })
+      .catch((err) => {
+        const error = err.message;
+        dispatch(getTodosFailed(error));
+      });
+  };
+};
 
-//store
-const store = createStore(productsReducer,applyMiddleware(logger));
+const store = createStore(todosReducer, applyMiddleware(reduxThunk));
 
 store.subscribe(() => {
   console.log(store.getState());
 });
 
-store.dispatch(getProductAction());
-store.dispatch(addProductAction("pen"));
+store.dispatch(fetchData());
