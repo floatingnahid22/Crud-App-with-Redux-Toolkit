@@ -1,14 +1,12 @@
-import React from "react";
-import "./App.css"
+import "./App.css";
 import Todos from "./components/Todos";
-const App = () => {
-  
 
+function App() {
   return (
-    <div>
+    <div className="App">
       <Todos />
     </div>
   );
-};
+}
 
 export default App;
